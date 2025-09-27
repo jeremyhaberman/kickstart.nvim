@@ -20,36 +20,10 @@ return {
           group_empty = true, -- Collapse empty folders
           icons = {
             show = {
-              git = true,
-              file = true,
-              folder = true,
-              folder_arrow = true,
-            },
-            glyphs = {
-              folder = {
-                arrow_closed = "",
-                arrow_open = "",
-              },
-              git = {
-                unstaged = "",
-                staged = "",
-                unmerged = "",
-                renamed = "",
-                untracked = "",
-                deleted = "",
-                ignored = "",
-              },
-            },
-            padding = " ",
-            web_devicons = {
-              folder = {
-                enable = true,
-                color = true,
-              },
-              file = {
-                enable = true,
-                color = true,
-              },
+              git = false,
+              file = false,
+              folder = false,
+              folder_arrow = false,
             },
           },
           special_files = {},
@@ -62,7 +36,6 @@ return {
         },
       }
 
-      -- Toggle with <leader>e
       vim.keymap.set('n', '<leader>e', '<cmd>NvimTreeToggle<CR>', { desc = 'Toggle file explorer' })
     end,
   },
