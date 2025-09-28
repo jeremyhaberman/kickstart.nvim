@@ -793,6 +793,7 @@ require('lazy').setup({
   { -- Autocompletion
     'saghen/blink.cmp',
     event = 'VimEnter',
+    ft = { '!markdown' }, -- Disable for markdown files (use nvim-cmp there)
     version = '1.*',
     dependencies = {
       -- Snippet Engine
