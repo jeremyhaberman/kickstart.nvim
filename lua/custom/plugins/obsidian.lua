@@ -60,28 +60,47 @@ return {
     lazy = true,
     ft = 'markdown',
     dependencies = { 'nvim-lua/plenary.nvim', 'hrsh7th/nvim-cmp' },
-    opts = {
-      workspaces = {
-        {
-          name = 'personal',
-          path = '~/Documents/AuditMiner',
+    config = function()
+      require('obsidian').setup {
+        workspaces = {
+          {
+            name = 'auditminer',
+            path = '~/Documents/AuditMiner',
+          },
+          {
+            name = 'personal',
+            path = '~/Documents/Knowledge Vault/',
+          },
         },
-      },
-      notes_subdir = 'Seeds',
-      new_notes_location = 'notes_subdir',
-      daily_notes = {
-        folder = 'Journal',
-      },
-      completion = {
-        nvim_cmp = true,
-        min_chars = 2,
-      },
-      ui = {
-        enable = true,
-      },
-      attachments = {
-        img_folder = 'z_attachments',
-      },
-    },
+        notes_subdir = '2 Seeds',
+        new_notes_location = 'notes_subdir',
+        daily_notes = {
+          folder = '1 Journal',
+        },
+        completion = {
+          nvim_cmp = true,
+          min_chars = 2,
+        },
+        ui = {
+          enable = true,
+        },
+        attachments = {
+          img_folder = 'z_attachments',
+        },
+      }
+
+      -- Set up custom keymaps after setup
+      vim.keymap.set('n', 'gf', function()
+        return require('obsidian').util.gf_passthrough()
+      end, { noremap = false, expr = true, buffer = true, desc = 'Follow Obsidian link' })
+
+      vim.keymap.set('n', '<leader>oc', function()
+        return require('obsidian').util.toggle_checkbox()
+      end, { buffer = true, desc = 'Toggle checkbox' })
+
+      vim.keymap.set('n', '<leader>on', '<cmd>ObsidianNew<cr>', { desc = 'New Obsidian note' })
+      vim.keymap.set('n', '<leader>os', '<cmd>ObsidianSearch<cr>', { desc = 'Search Obsidian notes' })
+      vim.keymap.set('n', '<leader>ot', '<cmd>ObsidianToday<cr>', { desc = "Today's daily note" })
+    end,
   },
 }
