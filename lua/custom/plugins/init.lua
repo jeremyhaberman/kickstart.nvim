@@ -15,6 +15,8 @@ return {
         view = {
           width = 40,
           side = 'left',
+          number = true,
+          relativenumber = true,
         },
         renderer = {
           group_empty = true, -- Collapse empty folders
