@@ -34,6 +34,32 @@ return {
         },
       }
 
+      local cmp = require 'cmp'
+
+      cmp.setup {
+        -- Other nvim-cmp settings...
+        sources = cmp.config.sources {
+          { name = 'obsidian' },
+          { name = 'path' },
+        },
+        mapping = cmp.mapping.preset.insert {
+          -- Manually trigger completion with `<C-space>`
+          ['<C-Space>'] = cmp.mapping.complete(),
+        },
+      }
+
+      -- Autocmd to configure nvim-cmp for markdown files
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'markdown',
+        callback = function()
+          cmp.setup.buffer {
+            -- Disable buffer source (word
+            -- completion) for markdown
+            sources = { { name = 'obsidian' }, { name = 'path' } },
+          }
+        end,
+      })
+
       -- Set up custom keymaps after setup
       vim.keymap.set('n', 'gf', function()
         return require('obsidian').util.gf_passthrough()
