@@ -313,7 +313,7 @@ require('lazy').setup({
       require('bufferline').setup {
         options = {
           mode = 'buffers',
-          diagnostics = 'nvim_lsp',
+          diagnostics = false,
           show_buffer_close_icons = false,
           offsets = {
             {
