@@ -129,11 +129,13 @@ vim.keymap.set('n', '<leader>wo', '<C-w>o', { desc = 'Close other windows' })
 
 vim.keymap.set('n', '<leader>g', '<cmd>Git<CR>', { desc = 'Git' })
 
--- Buffer navigation keymaps
-vim.keymap.set('n', '<S-h>', '<cmd>BufferLineCyclePrev<CR>', { desc = 'Previous buffer' })
-vim.keymap.set('n', '<S-l>', '<cmd>BufferLineCycleNext<CR>', { desc = 'Next buffer' })
-vim.keymap.set('n', '<leader>bp', '<cmd>BufferLinePickClose<CR>', { desc = 'Pick buffer to close' })
-vim.keymap.set('n', '<leader>bc', '<cmd>bd<CR>', { desc = 'Close current buffer' })
+-- Simple buffer navigation
+vim.keymap.set('n', '<S-h>', '<cmd>bprevious<CR>', { desc = 'Previous buffer' })
+vim.keymap.set('n', '<S-l>', '<cmd>bnext<CR>', { desc = 'Next buffer' })
+vim.keymap.set('n', '<leader>bd', '<cmd>bp | bd #<CR>', { desc = 'Delete buffer' })
+
+-- Copy file paths
+vim.keymap.set('n', '<leader>fp', ':let @+ = expand("%:p")<CR>', { silent = true, desc = 'Copy full path' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -305,31 +307,6 @@ require('lazy').setup({
         { '<leader>w', group = '[W]indow' },
       },
     },
-  },
-
-  {
-    'akinsho/bufferline.nvim',
-    version = '*',
-    dependencies = 'nvim-tree/nvim-web-devicons',
-    config = function()
-      require('bufferline').setup {
-        options = {
-          mode = 'buffers',
-          diagnostics = false,
-          show_buffer_close_icons = false,
-          offsets = {
-            {
-              filetype = 'neo-tree',
-              text = 'File Explorer',
-              text_align = 'left',
-              separator = true,
-            },
-          },
-          separator_style = 'slant',
-          always_show_bufferline = true,
-        },
-      }
-    end,
   },
 
   -- Plugins can specify dependencies.
@@ -818,7 +795,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        python = { 'ruff_format', 'ruff_organize_imports' },
+        python = { 'ruff_fix', 'ruff_format' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -928,9 +905,9 @@ require('lazy').setup({
     },
   },
 
-  { 
-    'catppuccin/nvim', 
-    name = 'catppuccin', 
+  {
+    'catppuccin/nvim',
+    name = 'catppuccin',
     priority = 1000,
     config = function()
       vim.cmd.colorscheme 'catppuccin-mocha'
