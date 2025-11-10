@@ -31,7 +31,7 @@ return {
           min_chars = 2,
         },
         ui = {
-          enable = true,
+          enable = false,
         },
         attachments = {
           img_folder = 'z_attachments',
