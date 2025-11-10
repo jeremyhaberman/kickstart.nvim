@@ -161,6 +161,19 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+-- Set 4-space indentation for JavaScript and Vue files
+vim.api.nvim_create_autocmd('FileType', {
+  desc = 'Set 4-space indentation for JavaScript and Vue',
+  group = vim.api.nvim_create_augroup('js-vue-indent', { clear = true }),
+  pattern = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
+  callback = function()
+    vim.bo.tabstop = 4
+    vim.bo.shiftwidth = 4
+    vim.bo.softtabstop = 4
+    vim.bo.expandtab = true
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -708,8 +721,16 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
-        --
+        ts_ls = {
+          -- TypeScript/JavaScript language server
+          -- Handles .ts, .js, .tsx, .jsx files
+          -- Works in hybrid mode with Volar for Vue files
+        },
+        volar = {
+          -- Vue language server (official Vue 3 LSP based on Volar)
+          -- Handles .vue files
+          -- Works in hybrid mode with ts_ls for script sections
+        },
 
         lua_ls = {
           -- cmd = { ... },
@@ -740,11 +761,34 @@ require('lazy').setup({
       --
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
+      -- Build the list of tools to install
+      -- Note: Some LSP server names in lspconfig differ from Mason package names
+      -- We handle those mappings explicitly below
       local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
+
+      -- Remove servers with different Mason package names
+      local mason_name_mappings = {
+        volar = 'vue-language-server',
+        ts_ls = 'typescript-language-server',
+      }
+
+      -- Filter out servers that need name mapping and add their Mason names
+      local filtered_installed = {}
+      for _, server in ipairs(ensure_installed) do
+        if not mason_name_mappings[server] then
+          table.insert(filtered_installed, server)
+        end
+      end
+
+      -- Add explicitly named tools (including mapped LSP servers)
+      vim.list_extend(filtered_installed, {
         'stylua', -- Used to format Lua code
+        'vue-language-server', -- Volar for Vue (lspconfig name: volar)
+        'typescript-language-server', -- TypeScript/JavaScript (lspconfig name: ts_ls)
+        'prettier', -- Formatting for JS/TS/Vue
       })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
+      require('mason-tool-installer').setup { ensure_installed = filtered_installed }
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
@@ -801,6 +845,8 @@ require('lazy').setup({
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        vue = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
@@ -964,7 +1010,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'vue', 'javascript', 'typescript' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
