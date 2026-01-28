@@ -12,13 +12,17 @@ return {
             name = 'auditminer',
             path = '~/Documents/AuditMiner',
           },
+          -- {
+          --   name = 'projects',
+          --   path = '~/Documents/Projects/',
+          -- },
+          -- {
+          --   name = 'personal',
+          --   path = '~/Documents/Knowledge/',
+          -- },
           {
-            name = 'projects',
-            path = '~/Documents/Projects/',
-          },
-          {
-            name = 'personal',
-            path = '~/Documents/Knowledge/',
+            name = 'knowledge',
+            path = '~/Knowledge Vault/',
           },
         },
         notes_subdir = '2 Seeds',
