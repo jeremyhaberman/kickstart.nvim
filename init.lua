@@ -161,18 +161,19 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
--- Set 4-space indentation for JavaScript and Vue files
+-- Set 2-space indentation for JavaScript and Vue files
 vim.api.nvim_create_autocmd('FileType', {
-  desc = 'Set 4-space indentation for JavaScript and Vue',
+  desc = 'Set 2-space indentation for JavaScript and Vue',
   group = vim.api.nvim_create_augroup('js-vue-indent', { clear = true }),
   pattern = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
   callback = function()
-    vim.bo.tabstop = 4
-    vim.bo.shiftwidth = 4
-    vim.bo.softtabstop = 4
+    vim.bo.tabstop = 2
+    vim.bo.shiftwidth = 2
+    vim.bo.softtabstop = 2
     vim.bo.expandtab = true
   end,
 })
+
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -724,16 +725,33 @@ require('lazy').setup({
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
-        ts_ls = {
-          -- TypeScript/JavaScript language server
-          -- Handles .ts, .js, .tsx, .jsx files
-          -- Works in hybrid mode with Volar for Vue files
+        -- vtsls: TypeScript wrapper that integrates with Vue
+        -- Works with vue_ls in hybrid mode for full Vue + TS support
+        vtsls = {
+          filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
+          settings = {
+            vtsls = {
+              tsserver = {
+                globalPlugins = {
+                  {
+                    name = '@vue/typescript-plugin',
+                    location = vim.fn.expand('~/.local/share/nvim/mason/packages/vue-language-server/node_modules/@vue/language-server'),
+                    languages = { 'vue' },
+                    configNamespace = 'typescript',
+                    enableForWorkspaceTypeScriptVersions = true,
+                  },
+                },
+              },
+            },
+          },
         },
-        volar = {
-          -- Vue language server (official Vue 3 LSP based on Volar)
-          -- Handles .vue files
-          -- Works in hybrid mode with ts_ls for script sections
+        vue_ls = {
+          -- Vue language server - works with vtsls in hybrid mode
+          init_options = {
+            typescript = {
+              tsdk = vim.fn.expand('~/.local/share/nvim/mason/packages/vtsls/node_modules/typescript/lib'),
+            },
+          },
         },
 
         lua_ls = {
@@ -772,8 +790,8 @@ require('lazy').setup({
 
       -- Remove servers with different Mason package names
       local mason_name_mappings = {
-        volar = 'vue-language-server',
-        ts_ls = 'typescript-language-server',
+        vue_ls = 'vue-language-server',
+        -- vtsls uses the same name in Mason, no mapping needed
       }
 
       -- Filter out servers that need name mapping and add their Mason names
@@ -787,8 +805,8 @@ require('lazy').setup({
       -- Add explicitly named tools (including mapped LSP servers)
       vim.list_extend(filtered_installed, {
         'stylua', -- Used to format Lua code
-        'vue-language-server', -- Volar for Vue (lspconfig name: volar)
-        'typescript-language-server', -- TypeScript/JavaScript (lspconfig name: ts_ls)
+        'vue-language-server', -- Vue language server (lspconfig name: vue_ls)
+        'vtsls', -- TypeScript wrapper with Vue plugin support
         'prettier', -- Formatting for JS/TS/Vue
       })
 
@@ -806,6 +824,49 @@ require('lazy').setup({
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
           end,
+          -- Explicit handler for vtsls to ensure Vue support
+          ['vtsls'] = function()
+            require('lspconfig').vtsls.setup {
+              capabilities = capabilities,
+              filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
+              settings = {
+                vtsls = {
+                  tsserver = {
+                    globalPlugins = {
+                      {
+                        name = '@vue/typescript-plugin',
+                        location = vim.fn.expand('~/.local/share/nvim/mason/packages/vue-language-server/node_modules/@vue/language-server'),
+                        languages = { 'vue' },
+                        configNamespace = 'typescript',
+                        enableForWorkspaceTypeScriptVersions = true,
+                      },
+                    },
+                  },
+                },
+              },
+            }
+          end,
+        },
+      }
+
+      -- Direct vtsls setup to ensure Vue filetypes are included
+      -- This overrides any previous setup from mason-lspconfig
+      require('lspconfig').vtsls.setup {
+        filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
+        settings = {
+          vtsls = {
+            tsserver = {
+              globalPlugins = {
+                {
+                  name = '@vue/typescript-plugin',
+                  location = vim.fn.expand('~/.local/share/nvim/mason/packages/vue-language-server/node_modules/@vue/language-server'),
+                  languages = { 'vue' },
+                  configNamespace = 'typescript',
+                  enableForWorkspaceTypeScriptVersions = true,
+                },
+              },
+            },
+          },
         },
       }
     end,
@@ -920,6 +981,7 @@ require('lazy').setup({
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
+        ['<M-Space>'] = { 'show', 'show_documentation', 'hide_documentation' },
         ['<Tab>'] = { 'fallback' },
         ['<S-Tab>'] = { 'fallback' },
 
@@ -1020,6 +1082,7 @@ require('lazy').setup({
       ensure_installed = {
         'bash',
         'c',
+        'css',
         'diff',
         'html',
         'lua',
