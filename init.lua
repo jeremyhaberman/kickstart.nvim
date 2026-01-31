@@ -812,46 +812,19 @@ require('lazy').setup({
 
       require('mason-tool-installer').setup { ensure_installed = filtered_installed }
 
-      require('mason-lspconfig').setup {
-        ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-        automatic_installation = false,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-          -- Explicit handler for vtsls to ensure Vue support
-          ['vtsls'] = function()
-            require('lspconfig').vtsls.setup {
-              capabilities = capabilities,
-              filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
-              settings = {
-                vtsls = {
-                  tsserver = {
-                    globalPlugins = {
-                      {
-                        name = '@vue/typescript-plugin',
-                        location = vim.fn.expand('~/.local/share/nvim/mason/packages/vue-language-server/node_modules/@vue/language-server'),
-                        languages = { 'vue' },
-                        configNamespace = 'typescript',
-                        enableForWorkspaceTypeScriptVersions = true,
-                      },
-                    },
-                  },
-                },
-              },
-            }
-          end,
-        },
-      }
+      -- Configure and enable LSP servers using Neovim 0.11+ vim.lsp.config API
+      for server_name, server_config in pairs(servers) do
+        -- Merge capabilities with server-specific config
+        local config = vim.tbl_deep_extend('force', {}, server_config)
+        config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, config.capabilities or {})
 
-      -- Direct vtsls setup to ensure Vue filetypes are included
-      -- This overrides any previous setup from mason-lspconfig
-      require('lspconfig').vtsls.setup {
+        -- Configure the server
+        vim.lsp.config(server_name, config)
+      end
+
+      -- Configure vtsls with Vue support (needs explicit filetypes)
+      vim.lsp.config('vtsls', {
+        capabilities = capabilities,
         filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
         settings = {
           vtsls = {
@@ -868,7 +841,12 @@ require('lazy').setup({
             },
           },
         },
-      }
+      })
+
+      -- Enable all configured servers
+      for server_name, _ in pairs(servers) do
+        vim.lsp.enable(server_name)
+      end
     end,
   },
 
