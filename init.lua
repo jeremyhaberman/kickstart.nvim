@@ -134,6 +134,10 @@ vim.keymap.set('n', '<S-h>', '<cmd>bprevious<CR>', { desc = 'Previous buffer' })
 vim.keymap.set('n', '<S-l>', '<cmd>bnext<CR>', { desc = 'Next buffer' })
 vim.keymap.set('n', '<leader>bd', '<cmd>bp | bd #<CR>', { desc = 'Delete buffer' })
 
+-- Remap spell navigation (frees ]s/[s for gitsigns staged hunk navigation)
+vim.keymap.set('n', ']m', ']s', { desc = 'Next [m]isspelled word' })
+vim.keymap.set('n', '[m', '[s', { desc = 'Previous [m]isspelled word' })
+
 -- Copy file paths
 vim.keymap.set('n', '<leader>fp', ':let @+ = expand("%:p")<CR>', { silent = true, desc = 'Copy full path' })
 
@@ -242,12 +246,11 @@ require('lazy').setup({
         untracked = { text = '┆' },
       },
       signs_staged = {
-        add = { text = '┃' },
-        change = { text = '┃' },
+        add = { text = '│' },
+        change = { text = '│' },
         delete = { text = '_' },
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
-        untracked = { text = '┆' },
       },
       signs_staged_enable = true,
       numhl = true, -- Toggle with `:Gitsigns toggle_numhl`

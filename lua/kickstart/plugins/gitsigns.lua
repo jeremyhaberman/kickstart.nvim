@@ -32,6 +32,20 @@ return {
           end
         end, { desc = 'Jump to previous git [c]hange' })
 
+        -- Staged/unstaged hunk navigation
+        map('n', ']s', function()
+          gitsigns.nav_hunk('next', { target = 'staged' })
+        end, { desc = 'Jump to next [s]taged hunk' })
+        map('n', '[s', function()
+          gitsigns.nav_hunk('prev', { target = 'staged' })
+        end, { desc = 'Jump to previous [s]taged hunk' })
+        map('n', ']u', function()
+          gitsigns.nav_hunk('next', { target = 'unstaged' })
+        end, { desc = 'Jump to next [u]nstaged hunk' })
+        map('n', '[u', function()
+          gitsigns.nav_hunk('prev', { target = 'unstaged' })
+        end, { desc = 'Jump to previous [u]nstaged hunk' })
+
         -- Actions
         -- visual mode
         map('v', '<leader>hs', function()
