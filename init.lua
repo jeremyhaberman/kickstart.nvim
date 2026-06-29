@@ -1005,11 +1005,25 @@ require('lazy').setup({
   },
 
   {
-    'catppuccin/nvim',
-    name = 'catppuccin',
+    'navarasu/onedark.nvim',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'catppuccin-mocha'
+      require('onedark').setup {
+        -- 'dark' matches VSCode's "Atom One Dark" (editor pane is #282c34).
+        -- Other moods: 'darker', 'cool', 'deep', 'warm', 'warmer'.
+        style = 'dark',
+        -- Match VSCode's darker window chrome (#21252b) as the main background.
+        colors = { bg0 = '#21252b' },
+        -- Per-group overrides, applied last. Reference palette colors with a '$'
+        -- prefix: '$fg' (#abb2bf, body text), '$light_grey' (#848b98),
+        -- '$grey' (#5c6370, the dim default), or any accent like '$cyan'/'$green'.
+        highlights = {
+          -- Blockquotes (`>` lines) default to '$grey', too dim on #21252b.
+          -- Bumped to '$light_grey' (#848b98): readable but still muted.
+          ['@markup.quote'] = { fg = '$light_grey', fmt = 'italic' },
+        },
+      }
+      require('onedark').load()
     end,
   },
 
