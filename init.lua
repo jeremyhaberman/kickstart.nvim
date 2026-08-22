@@ -121,6 +121,12 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.keymap.set('n', '<leader>wc', '<C-w>c', { desc = 'Close window' })
 vim.keymap.set('n', '<leader>wo', '<C-w>o', { desc = 'Close other windows' })
 
+-- Resize windows with <leader>w + arrow keys (avoids macOS Ctrl+arrow / Mission Control conflicts)
+vim.keymap.set('n', '<leader>w<Up>', '<cmd>resize +2<CR>', { desc = 'Increase window height' })
+vim.keymap.set('n', '<leader>w<Down>', '<cmd>resize -2<CR>', { desc = 'Decrease window height' })
+vim.keymap.set('n', '<leader>w<Left>', '<cmd>vertical resize +2<CR>', { desc = 'Increase window width' })
+vim.keymap.set('n', '<leader>w<Right>', '<cmd>vertical resize -2<CR>', { desc = 'Decrease window width' })
+
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
@@ -128,6 +134,14 @@ vim.keymap.set('n', '<leader>wo', '<C-w>o', { desc = 'Close other windows' })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
 vim.keymap.set('n', '<leader>g', '<cmd>Git<CR>', { desc = 'Git' })
+
+-- Populate the quickfix list with every file changed on this branch vs origin/main.
+local function git_changed_files()
+  vim.fn.system 'git fetch' -- blocking, so the diff below sees an up-to-date remote
+  vim.cmd 'Git difftool origin/main...HEAD'
+  vim.cmd 'copen'
+end
+vim.keymap.set('n', '<leader>gc', git_changed_files, { desc = 'Git [c]hanged files (vs origin/main)' })
 
 -- Simple buffer navigation
 vim.keymap.set('n', '<S-h>', '<cmd>bprevious<CR>', { desc = 'Previous buffer' })
