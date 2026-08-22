@@ -179,11 +179,25 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
--- Set 2-space indentation for JavaScript and Vue files
+-- Force *.tf files to filetype=terraform.
+-- Neovim's built-in detection for `.tf` sniffs file content and only returns
+-- `terraform` when it finds a non-empty, non-comment line; an empty/new .tf file
+-- falls back to filetype `tf`, which has no ftplugin/indent/LSP. User-added
+-- extension mappings take precedence over the built-in content detection.
+vim.filetype.add {
+  extension = {
+    tf = 'terraform',
+    tfvars = 'terraform',
+  },
+}
+
+-- Set 2-space indentation for JavaScript/Vue/Terraform files.
+-- This is explicit (not left to guess-indent.nvim) so a brand-new/empty buffer,
+-- which has no content to infer indentation from, still gets 2-space expandtab.
 vim.api.nvim_create_autocmd('FileType', {
-  desc = 'Set 2-space indentation for JavaScript and Vue',
-  group = vim.api.nvim_create_augroup('js-vue-indent', { clear = true }),
-  pattern = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
+  desc = 'Set 2-space indentation for JavaScript, Vue, and Terraform',
+  group = vim.api.nvim_create_augroup('two-space-indent', { clear = true }),
+  pattern = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue', 'terraform', 'hcl' },
   callback = function()
     vim.bo.tabstop = 2
     vim.bo.shiftwidth = 2
@@ -736,6 +750,7 @@ require('lazy').setup({
           },
         },
         ruff = {},
+        terraformls = {}, -- Terraform / OpenTofu language server (Mason package: terraform-ls)
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -808,6 +823,7 @@ require('lazy').setup({
       -- Remove servers with different Mason package names
       local mason_name_mappings = {
         vue_ls = 'vue-language-server',
+        terraformls = 'terraform-ls',
         -- vtsls uses the same name in Mason, no mapping needed
       }
 
@@ -825,6 +841,7 @@ require('lazy').setup({
         'vue-language-server', -- Vue language server (lspconfig name: vue_ls)
         'vtsls', -- TypeScript wrapper with Vue plugin support
         'prettier', -- Formatting for JS/TS/Vue
+        'terraform-ls', -- Terraform language server (lspconfig name: terraformls)
       })
 
       require('mason-tool-installer').setup { ensure_installed = filtered_installed }
@@ -908,6 +925,8 @@ require('lazy').setup({
         typescript = { 'prettierd', 'prettier', stop_after_first = true },
         vue = { 'prettierd', 'prettier', stop_after_first = true },
         json = { 'prettierd', 'prettier', stop_after_first = true },
+        terraform = { 'terraform_fmt' },
+        hcl = { 'terraform_fmt' },
         -- html = { 'djlint', 'prettierd', 'prettier', stop_after_first = true },
         -- htmldjango = { 'djlint', 'prettierd', 'prettier', stop_after_first = true },
       },
@@ -1141,6 +1160,8 @@ require('lazy').setup({
         'vue',
         'javascript',
         'typescript',
+        'terraform',
+        'hcl',
       },
       -- Autoinstall languages that are not installed
       auto_install = true,
