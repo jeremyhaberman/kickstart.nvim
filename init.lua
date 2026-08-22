@@ -1039,25 +1039,32 @@ require('lazy').setup({
   },
 
   {
-    'navarasu/onedark.nvim',
+    'catppuccin/nvim',
+    name = 'catppuccin',
     priority = 1000,
     config = function()
-      require('onedark').setup {
-        -- 'dark' matches VSCode's "Atom One Dark" (editor pane is #282c34).
-        -- Other moods: 'darker', 'cool', 'deep', 'warm', 'warmer'.
-        style = 'dark',
-        -- Match VSCode's darker window chrome (#21252b) as the main background.
-        colors = { bg0 = '#21252b' },
-        -- Per-group overrides, applied last. Reference palette colors with a '$'
-        -- prefix: '$fg' (#abb2bf, body text), '$light_grey' (#848b98),
-        -- '$grey' (#5c6370, the dim default), or any accent like '$cyan'/'$green'.
-        highlights = {
-          -- Blockquotes (`>` lines) default to '$grey', too dim on #21252b.
-          -- Bumped to '$light_grey' (#848b98): readable but still muted.
-          ['@markup.quote'] = { fg = '$light_grey', fmt = 'italic' },
+      require('catppuccin').setup {
+        -- Flavours: 'latte' (light), 'frappe', 'macchiato', 'mocha' (darkest).
+        flavour = 'mocha',
+        -- Teach catppuccin about the plugins in this config so their
+        -- highlights get themed instead of falling back to defaults.
+        integrations = {
+          blink_cmp = true,
+          fidget = true,
+          gitsigns = true,
+          mason = true,
+          markdown = true,
+          mini = { enabled = true },
+          native_lsp = { enabled = true },
+          neotree = true,
+          render_markdown = true,
+          telescope = { enabled = true },
+          todo_comments = true,
+          treesitter = true,
+          which_key = true,
         },
       }
-      require('onedark').load()
+      vim.cmd.colorscheme 'catppuccin-mocha'
     end,
   },
 
