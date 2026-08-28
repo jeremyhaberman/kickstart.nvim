@@ -29,9 +29,7 @@ return {
     -- The lazy.nvim `keys` field both defines the mapping AND lazy-loads the
     -- plugin the moment you press it.
     keys = {
-      -- TODO(human): add a keymap that toggles the preview.
-      -- Shape of one entry:
-      { '<leader>mp', '<cmd>MarkdownPreviewToggle<cr>', ft = 'markdown', desc = '...' },
+      { '<leader>mp', '<cmd>MarkdownPreviewToggle<cr>', ft = 'markdown', desc = 'Toggle [M]arkdown [P]review' },
       -- The `<leader>m` group is already registered in init.lua as [M]arkdown.
     },
   },
