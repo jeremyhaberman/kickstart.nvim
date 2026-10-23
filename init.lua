@@ -151,6 +151,11 @@ vim.keymap.set('n', '[m', '[s', { desc = 'Previous [m]isspelled word' })
 -- Copy file paths
 vim.keymap.set('n', '<leader>fp', ':let @+ = expand("%:p")<CR>', { silent = true, desc = 'Copy full path' })
 
+-- Open the cheatsheet beside the current file. It is an ordinary buffer, so you can keep it up to date in place.
+vim.keymap.set('n', '<leader>?', function()
+  vim.cmd.vsplit(vim.fn.stdpath 'config' .. '/CHEATSHEET.md')
+end, { desc = 'Open the cheatsheet' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
