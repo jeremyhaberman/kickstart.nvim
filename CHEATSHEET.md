@@ -30,6 +30,8 @@ The keys and commands this config sets up. `<leader>` is the space bar.
 | `<leader>sr` | Reopen the last search |
 | `<leader>sn` | Search this Neovim config |
 | `<leader>fp` | Copy the current file's full path |
+| `<leader>sp` | Find files in this branch's plan workspace, which can live outside the repo. `<C-v>` opens the result in a split beside your code. |
+| `<leader>wp` | Open this branch's plan workspace in its own tab, with Neo-tree. If that tab is already open, switch to it. `gt` moves between tabs. |
 
 ## Buffers and windows
 

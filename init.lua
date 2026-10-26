@@ -210,6 +210,9 @@ vim.api.nvim_create_autocmd('FileType', {
 -- Markdown editing helpers (checkbox toggling)
 require('custom.markdown').setup()
 
+-- Open the branch's ACE plan workspace, which lives outside the repo
+require('custom.workspace').setup()
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
