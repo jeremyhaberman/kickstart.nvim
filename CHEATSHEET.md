@@ -45,6 +45,20 @@ The keys and commands this config sets up. `<leader>` is the space bar.
 | `<leader>w` + arrow key | Resize the window |
 | `<Esc><Esc>` | Leave terminal mode |
 
+## Tabs
+
+These keys are built into Neovim. They are here because Diffview and `<leader>wp` open their own tabs.
+
+| Key or command | What it does |
+|---|---|
+| `:tabnew` | Open an empty tab. `:tabnew path/to/file` opens a file in it. |
+| `:tab split` | Open the current buffer in a new tab |
+| `<C-w>T` | Move the current window into its own tab |
+| `gt` / `gT` | Next or previous tab |
+| `3gt` | Go to tab 3 |
+| `:tabclose` | Close the tab. Its buffers stay open. |
+| `:tabonly` | Close all other tabs |
+
 ## Code navigation (LSP)
 
 These keys work in any file that has a language server.
